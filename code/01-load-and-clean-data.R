@@ -44,27 +44,6 @@ us_pumas <- us_pumas %>% mutate(STATEFIP = as.numeric(STATEFIP))
 # View PUMAs
 head(us_pumas)
 
-# Download PUMA data dictionary -------------------------------------------
-
-download.file("https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/PUMS_Data_Dictionary_2020.csv",
-              destfile = "data/PUMS_Data_Dictionary_2020.csv")
-
-data_dictonary <- read_csv("data/PUMS_Data_Dictionary_2020.csv",
-                           col_names = c("record_type","var_code","var_type","val_length","var_min","var_max","label"))
-
-write_rds(data_dictonary, "data_dictionary.rds")
-
-var_names <- data_dictonary %>% 
-  select(record_type, var_code, var_min) %>% 
-  filter(record_type == "NAME") %>%
-  distinct(var_code, var_min)
-
-var_labels_cat <- data_dictonary %>%
-  filter(record_type == "VAL" & var_type == "C") %>%
-  distinct(var_code, var_min, label) %>%
-  filter(!var_code %in% c("SERIALNO","PUMA","ADJHSG","ADJINC"))
-
-
 # Merge with PUMA Name ----------------------------------------------------
 # Household
 hdc_geo <- hdc %>% left_join(us_pumas, by = c("ST" = "STATEFIP", "PUMA" = "PUMA"))
@@ -131,5 +110,4 @@ pdc_srvy %>%
   mutate(PINCP_ADJ = PINCP * (ADJINC/1000000)) %>%
   group_by(Name) %>%
   summarize(population = survey_total(vartype = "ci"),
-            median_income = survey_median(PINCP_ADJ, vartype = "ci",na.rm = T)) %>%
-  kable()
+            median_income = survey_median(PINCP_ADJ, vartype = "ci",na.rm = T)) 

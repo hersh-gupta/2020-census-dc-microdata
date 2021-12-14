@@ -17,4 +17,4 @@ Analysis conducted in R:
 
 * Use `renv::restore()` to recreate R environment
 
-* Run `01-load-and-clean-data.R` to run tutorial
+* Run `code/01-load-and-clean-data.R` to run tutorial
